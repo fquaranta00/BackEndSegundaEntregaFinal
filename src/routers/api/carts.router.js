@@ -7,7 +7,8 @@ const cartsRouter = Router();
 // Endpoint para obtener todos los carritos
 cartsRouter.get('/carts', async (req, res) => {
     try {
-        const carts = await CartManager.getAllCarts(); 
+        const carts = await CartManager.getAllCarts();
+        // console.log(carts); 
         res.status(200).json(carts);
     } catch (error) {
         res.status(500).json({ error: error.message });

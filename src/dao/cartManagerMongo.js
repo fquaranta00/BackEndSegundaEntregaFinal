@@ -8,6 +8,7 @@ export default class CartManager {
   static async getAllCarts() {
     try {
       const cart = await Cart.find();
+      // console.log('cart',JSON.stringify(cart, null, 2));
       return cart;
     } catch (error) {
       console.error('Error al obtener todos los carritos:', error);
@@ -32,7 +33,7 @@ export default class CartManager {
   static async createCart() {
     try {
       // console.log(CartManager.getNewId());
-      const newCart = await Cart.create({ id: CartManager.getNewId(), products: [] });
+      const newCart = await Cart.create({ products: [] });
       return newCart;
     } catch (error) {
       console.error('Error al crear el carrito:', error);
@@ -42,27 +43,38 @@ export default class CartManager {
 
   static async addProductToCart(cartId, productId, quantity) {
     try {
-      const cart = await Cart.findById(cartId);
+      const cart = await Cart.findOne({ _id: cartId });
+
       if (!cart) {
-        throw new Exception('Carrito no encontrado', 404);
+        // Si el carrito no existe, puedes optar por crear uno nuevo o manejarlo según tus necesidades
+        console.error('Carrito no encontrado.');
+        // Aquí podrías lanzar una excepción o crear un nuevo carrito, dependiendo de tus requerimientos.
+        return null;
       }
 
-      const existingProduct = cart.products.find(product => product.productId === productId);
+      // Verifica si el producto ya existe en el carrito
+      const existingProduct = cart.products.find((Product) => String(Product.productId) === productId);
+      console.log(existingProduct);
 
       if (existingProduct) {
+        // Si existe, incrementa la cantidad
         existingProduct.quantity += quantity;
       } else {
+        // Si no existe, agrega un nuevo producto al array
         cart.products.push({ productId, quantity });
       }
 
-      await cart.save();
-      return cart;
+      // Guarda la actualización del carrito
+      const updatedCart = await cart.save();
+
+      console.log('Producto agregado al carrito:', updatedCart);
+      return updatedCart;
     } catch (error) {
       console.error('Error al agregar producto al carrito:', error);
       throw new Exception('Error al agregar producto al carrito', 500);
     }
   }
-  
+
   static async deleteCart(cartId) {
     try {
       const deletedCart = await Cart.findByIdAndDelete(cartId);

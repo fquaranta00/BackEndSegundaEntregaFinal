@@ -5,8 +5,8 @@ import { __dirname } from './utils.js';
 import productsRouter from "../src/routers/products.router.js";
 import cartsRouter from "../src/routers/carts.router.js";
 import homeRouter from './routers/home.router.js';
-// import productsRouterMD from "../src/routers/api/products.router.js";
-// import cartsRouterMD from "../src/routers/api/carts.router.js";
+import productsRouterMD from "../src/routers/api/products.router.js";
+import cartsRouterMD from "../src/routers/api/carts.router.js";
 import chatRouter from '../src/routers/chat.router.js';
 // import chatRouterMD from '../src/routers/api/chat.router.js'
 import Views from "../src/routers/views.router.js"
@@ -25,7 +25,7 @@ app.set('view engine', 'handlebars');
 
 app.use('/', homeRouter, productsRouter, cartsRouter);
 // app.use('/api', productsRouter, cartsRouter);
-// app.use('/api', productsRouterMD, cartsRouterMD);
+app.use('/api', productsRouterMD, cartsRouterMD);
 app.use('/chat', chatRouter);
 app.use('/views', Views);
 
