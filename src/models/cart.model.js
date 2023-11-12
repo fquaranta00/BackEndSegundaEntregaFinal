@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 const productQuantitySchema = new mongoose.Schema({
   productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
   quantity: { type: Number, required: true },
+  productDetails: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
 }, { _id: false });
 
 const productOrderSchema = new mongoose.Schema({
@@ -11,9 +12,8 @@ const productOrderSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-productOrderSchema.pre('find', function (next) {
+productOrderSchema.pre('find', function () {
   this.populate('products.productId');
-  next();
 });
 
 
