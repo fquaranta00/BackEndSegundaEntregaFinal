@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import ProductManager from '../dao/ProductManagerMongo.js'; 
+import CartManager from '../dao/cartManagerMongo.js'; 
 
 
 const router = Router();
@@ -58,7 +59,10 @@ router.get('/products', async (req, res) => {
 
     // res.render('views', { products }); // Pasamos los productos como contexto para la vista
 
-    res.render('views', buildResponse(products));
+    res.render('products', buildResponse(products));
+
+    // res.render('products', buildResponse(products)); // Renderizar la vista 'products'
+
 
   } catch (error) {
     res.status(error.statusCode || 500).json({ message: error.message });
@@ -70,41 +74,35 @@ router.get('/products/:pid', async (req, res) => {
   try {
     const { pid } = req.params;
     const product = await ProductManager.getById(pid);
-    res.status(200).json(product);
+    res.render('productDetails', { product: product.toJSON() });
+    // res.status(200).json(product);
   } catch (error) {
     res.status(error.statusCode || 500).json({ message: error.message });
   }
 });
 
-// router.post('/products', async (req, res) => {
-//   try {
-//     const product = await ProductManager.create(req.body);
-//     res.status(201).json(product);
-//   } catch (error) {
-//     res.status(error.statusCode || 500).json({ message: error.message });
-//   }
-// });
+// Ruta para obtener detalles de un carrito por ID
+router.get('/carts/:cartId', async (req, res) => {
+  try {
+    const { cartId } = req.params;
 
-// router.put('/products/:pid', async (req, res) => {
-//   try {
-//     const { pid } = req.params;
-//     await ProductManager.updateById(pid, req.body);
-//     res.status(204).end();
-//   } catch (error) {
-//     res.status(error.statusCode || 500).json({ message: error.message });
-//   }
-// });
+    // Aquí deberías tener tu lógica para obtener los detalles del carrito por ID
+    // Supongamos que tienes una función en tu gestor de carritos para obtener el carrito por ID
+    const cart = await CartManager.getCartById(cartId);
+    
+    if (!cart) {
+      console.log(`El carrito con ID ${cartId} no fue encontrado.`);
+      // Puedes redirigir a una página de error o manejar de otra manera.
+      return res.status(404).render('error', { message: 'Carrito no encontrado' });
+    }
 
-// router.delete('/products/:pid', async (req, res) => {
-//   try {
-//     const { pid } = req.params;
-//     await ProductManager.deleteById(pid);
-//     res.status(204).end();
-//     return "Producto eliminado exitosamente";
-//   } catch (error) {
-//     res.status(error.statusCode || 500).json({ message: error.message });
-//   }
-  
-// });
+    // Renderizar la vista 'carts'
+    res.render('cart', { cart: cart.toJSON() });
+
+  } catch (error) {
+    res.status(error.statusCode || 500).json({ message: error.message });
+  }
+});
+
 
 export default router;

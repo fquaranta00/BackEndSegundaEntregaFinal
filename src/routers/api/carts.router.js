@@ -74,5 +74,59 @@ cartsRouter.delete('/carts/:cartId/products/:productId', async (req, res) => {
     }
 });
 
+// Endpoint para actualizar la cantidad de un producto en el carrito
+cartsRouter.put('/carts/:cartId/products/:productId', async (req, res) => {
+    try {
+        const { cartId, productId } = req.params;
+        const { quantity } = req.body;
+
+        await CartManager.updateProductQuantity(cartId, productId, quantity);
+
+        res.status(200).json({ message: 'Cantidad de producto actualizada correctamente' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Endpoint para eliminar todos los productos del carrito
+cartsRouter.delete('/carts/:cartId/products', async (req, res) => {
+    try {
+        const { cartId } = req.params;
+
+        await CartManager.removeAllProductsFromCart(cartId);
+
+        res.status(200).json({ message: 'Todos los productos eliminados del carrito correctamente' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Endpoint para actualizar todos los productos en el carrito
+cartsRouter.put('/carts/:cartId', async (req, res) => {
+    try {
+        const { cartId } = req.params;
+        const { products } = req.body;
+
+        await CartManager.updateCart(cartId, products);
+
+        res.status(200).json({ message: 'Productos del carrito actualizados correctamente' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Endpoint para visualizar un carrito específico
+cartsRouter.get('/carts/:cid', async (req, res) => {
+    try {
+      const { cid } = req.params;
+      const cart = await CartManager.getCartById(cid);
+  
+      res.render('cart', { products: cart.products }); // Renderizar la vista 'cart'
+  
+    } catch (error) {
+      res.status(error.statusCode || 500).json({ message: error.message });
+    }
+  });
+
 
 export default cartsRouter;

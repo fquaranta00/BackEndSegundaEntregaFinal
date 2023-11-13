@@ -1,0 +1,29 @@
+<!-- views/cart.hbs -->
+<h1>Carrito de Compras</h1>
+
+{{#if products.length}}
+  <table>
+    <thead>
+      <tr>
+        <th>Producto</th>
+        <th>Cantidad</th>
+        <th>Precio Unitario</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each products}}
+        <tr>
+          <td>{{this.productId.title}}</td>
+          <td>{{this.quantity}}</td>
+          <td>${{this.productId.price}}</td>
+          <td>${{this.quantity this.productId.price}}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+  <p>Total a Pagar: ${{totalAmount}}</p>
+  <a href="/checkout">Realizar Pago</a>
+{{else}}
+  <p>El carrito está vacío</p>
+{{/if}}

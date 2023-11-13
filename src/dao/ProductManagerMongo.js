@@ -30,9 +30,9 @@ export default class ProductManager {
     if (!product) {
       throw new Exception('Producto no encontrado 😨', 404);
     }
-    const criteria = { _id: pid };
+    // const criteria = { _id: pid };
     const operation = { $set: data };
-    await ProductModel.updateOne(criteria, operation);
+    await ProductModel.updateOne(operation);
     console.log('Producto actualizado correctamente 😁');
   }
 
@@ -45,6 +45,7 @@ export default class ProductManager {
     await ProductModel.deleteOne(criteria);
     console.log('Producto eliminado correctamente 😑');
   }
+
 
   static async aggregate(pipeline) {
     const result = await ProductModel.aggregate(pipeline);

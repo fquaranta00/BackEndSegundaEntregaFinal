@@ -19,7 +19,7 @@ export default class CartManager {
   static async getCartById(cartId) {
     try {
       const cart = await Cart.findOne({ _id: cartId }).populate('products.productId').populate('products.productDetails');
-      console.log(cart);
+      // console.log(cart);
       return cart;
     } catch (error) {
       console.error('Error al obtener el carrito por ID:', error);
@@ -88,26 +88,28 @@ export default class CartManager {
 
   static async removeProductFromCart(cartId, productId) {
     try {
-      const cart = await Cart.findById(cartId);
+      const cart = await Cart.findOne({ _id: cartId });
       if (!cart) {
         throw new Exception('Carrito no encontrado', 404);
       }
-
-      const updatedProducts = cart.products.filter(product => product.productId !== productId);
-
+  
+      const updatedProducts = cart.products.filter(product => product.productId.toString() !== productId);
+  
       cart.products = updatedProducts;
       await cart.save();
+      // console.log(cart);
+  
       return cart;
     } catch (error) {
       console.error('Error al remover producto del carrito:', error);
       throw new Exception('Error al remover producto del carrito', 500);
     }
   }
-
+  
 
   static async updateCart(cartId, products) {
     try {
-      const cart = await Cart.findById(cartId);
+      const cart = await Cart.findOne({ _id: cartId });
       if (!cart) {
         throw new Exception('Carrito no encontrado', 404);
       }
@@ -123,28 +125,29 @@ export default class CartManager {
 
   static async updateProductQuantity(cartId, productId, quantity) {
     try {
-      const cart = await Cart.findById(cartId);
-      if (!cart) {
-        throw new Exception('Carrito no encontrado', 404);
-      }
+        const cart = await Cart.findOne({ _id: cartId });
+        if (!cart) {
+            throw new Exception('Carrito no encontrado', 404);
+        }
 
-      const existingProduct = cart.products.find(product => product.productId.toString() === productId);
+        const existingProduct = cart.products[productId];
 
-      if (existingProduct) {
-        existingProduct.quantity = quantity;
-      }
+        if (existingProduct) {
+            existingProduct.quantity = quantity;
+        }
 
-      await cart.save();
-      return cart;
+        await cart.save();
+        return cart;
     } catch (error) {
-      console.error('Error al actualizar la cantidad del producto en el carrito:', error);
-      throw new Exception('Error al actualizar la cantidad del producto en el carrito', 500);
+        console.error('Error al actualizar la cantidad del producto en el carrito:', error);
+        throw new Exception('Error al actualizar la cantidad del producto en el carrito', 500);
     }
-  }
+}
 
+  
   static async removeAllProductsFromCart(cartId) {
     try {
-      const cart = await Cart.findById(cartId);
+      const cart = await Cart.findOne({ _id: cartId });
       if (!cart) {
         throw new Exception('Carrito no encontrado', 404);
       }
